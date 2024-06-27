@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(CalculatorApp());
+void main() => runApp(MyApp());
 
-class CalculatorApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Calculator(),
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.black,
@@ -16,12 +16,186 @@ class CalculatorApp extends StatelessWidget {
   }
 }
 
-class Calculator extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _CalculatorState createState() => _CalculatorState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _CalculatorState extends State<Calculator> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToTab(int index) {
+    Navigator.pop(context);
+    setState(() {
+      _tabController.index = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My App'),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.orange,
+          indicatorWeight: 4.0,
+          labelColor: Colors.orange,
+          unselectedLabelColor: Colors.white,
+          tabs: [
+            Tab(icon: Icon(Icons.login), text: 'Sign In'),
+            Tab(icon: Icon(Icons.person_add), text: 'Sign Up'),
+            Tab(icon: Icon(Icons.calculate), text: 'Calculator'),
+          ],
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Navigation Drawer',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.login),
+              title: Text('Sign In'),
+              onTap: () => _navigateToTab(0),
+            ),
+            ListTile(
+              leading: Icon(Icons.person_add),
+              title: Text('Sign Up'),
+              onTap: () => _navigateToTab(1),
+            ),
+            ListTile(
+              leading: Icon(Icons.calculate),
+              title: Text('Calculator'),
+              onTap: () => _navigateToTab(2),
+            ),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          SignInScreen(),
+          SignUpScreen(),
+          CalculatorScreen(),
+        ],
+      ),
+    );
+  }
+}
+
+class SignInScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text('Sign In'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 16),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text('Sign Up'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CalculatorScreen extends StatefulWidget {
+  @override
+  _CalculatorScreenState createState() => _CalculatorScreenState();
+}
+
+class _CalculatorScreenState extends State<CalculatorScreen> {
   String _output = "0";
   String _currentInput = "";
   String _operator = "";
@@ -94,9 +268,6 @@ class _CalculatorState extends State<Calculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Calculator"),
-      ),
       body: Column(
         children: <Widget>[
           Container(
